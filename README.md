@@ -1,4 +1,4 @@
-# CanvasLytics  
+# CanvasLytics  [[Live](https://singharindam.github.io/CanvasLytics/) | [GitHub](https://github.com/SinghArindam/CanvasLytics)]
 *Natural-language data exploration and baseline modelling on an infinite, Excalidraw-style canvas.*
 
 ---
