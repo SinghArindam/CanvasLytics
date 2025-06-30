@@ -2,6 +2,34 @@
 *Natural-language data exploration and baseline modelling on an infinite, Excalidraw-style canvas.*
 
 ---
+### Landing Page
+![Landing Page](image-1.png)
+
+---
+### Loading
+![Loading](image-2.png)
+
+---
+### Titanic Dataset
+![Titanic Dataset](image-3.png)
+
+---
+
+
+
+---
+## Architecture
+| Layer | Component | Purpose |
+|-------|-----------|---------|
+| Client | React / Next.js SPA | Infinite-canvas UI; communicates over WebSockets for live updates. |
+| Agent  | `mcp-agent` | Routes user requests to the appropriate MCP tool and manages multi-step workflows. |
+| MCP-EDA | `pandas-eda` | `load_csv`, `describe`, `missing_values`, `plot_hist`, `plot_corr` (Pandas + Seaborn). |
+| MCP-ML  | `sklearn-lab` | `train_model`, `evaluate_model`, `feature_importance` (scikit-learn). |
+| Storage | Postgres + object store | Persists boards, datasets, and generated charts. |
+
+![Graph](image.png)
+
+---
 
 ## Key Features
 | Group | Functionality |
@@ -12,17 +40,6 @@
 | **Model prototyping** | Wizard that trains a baseline scikit-learn pipeline on a user-selected target, then reports accuracy, ROC-AUC, and feature importance; model artefact can be downloaded as a pickle file. |
 | **Narrative & sharing** | Auto-generated text summary of EDA findings and model metrics, plus export to PNG, PDF, or read-only share link; per-session version history. |
 | **Performance** | Two MCP servers—one for pandas-based EDA tasks, one for scikit-learn modelling—handle requests concurrently; the front-end can stream partial results so long-running jobs do not freeze the UI. |
-
----
-
-## Architecture
-| Layer | Component | Purpose |
-|-------|-----------|---------|
-| Client | React / Next.js SPA | Infinite-canvas UI; communicates over WebSockets for live updates. |
-| Agent  | `mcp-agent` | Routes user requests to the appropriate MCP tool and manages multi-step workflows. |
-| MCP-EDA | `pandas-eda` | `load_csv`, `describe`, `missing_values`, `plot_hist`, `plot_corr` (Pandas + Seaborn). |
-| MCP-ML  | `sklearn-lab` | `train_model`, `evaluate_model`, `feature_importance` (scikit-learn). |
-| Storage | Postgres + object store | Persists boards, datasets, and generated charts. |
 
 ---
 
@@ -82,7 +99,8 @@ poetry install && poetry run dev
 
 ---
 
-## License
-Apache 2.0
+## [License](LICENSE)
+Apache 2.0 License - 2025 Arindam Singh (@SinghArindam)
 
 ---
+> *- Arindam Singh*
