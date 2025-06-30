@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Ask-Your-Data – System Design (D3.js)</title>
+
+<!-- ❶  Include D3 from the official CDN -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<style>
+  /* ❷  Basic canvas styling */
+  body      { margin: 0; font-family: Helvetica, Arial, sans-serif; }
+  svg       { width: 100vw; height: 100vh; background: #ffffff; }
+
+  /* ❸  Uniform node appearance (rounded “cards”) */
+  .node rect {
+    rx: 12px;                     /* corner radius */
+    ry: 12px;
+    stroke-width: 2px;
+  }
+
+  /* ❹  Edge styling */
+  line.link       { stroke: #4A90E2; stroke-width: 2px; }
+  line.link.dash  { stroke-dasharray: 6 4; }            /* dashed to Storage */
+
+  /* ❺  Edge labels */
+  text.linkLabel  { font-size: 11px; fill: #4A90E2; text-anchor: middle; }
+
+  /* ❻  Node text */
+  text.title      { font-weight: 700; font-size: 14px; }
+  text.subtitle   { font-size: 11px; }
+</style>
+</head>
+<body>
+
+<svg id="diagram"></svg>
+
+<script>
+/*  ───────────────────────────────
+    1.  DATA MODEL
+    ─────────────────────────────── */
+const nodes = [
+  { id: "Client",   group: "presentation", color: "#D9E8FF", border: "#4A90E2",
+                      title: "Client",  subtitle: "\n\nReact / Next.js SPA\nExcalidraw-style UI" },
+
+  { id: "Agent",    group: "agent",        color: "#FFE6CC", border: "#FF8C00",
+                      title: "Agent",   subtitle: "\n\nmcp-agent orchestrator\nMulti-step reasoning" },
+
+  { id: "MCP1",     group: "analytics1",   color: "#E6F7FF", border: "#007ACC",
+                      title: "MCP Server #1", subtitle: "\n\n\"pandas-eda\"\nPandas + Seaborn tools" },
+
+  { id: "MCP2",     group: "analytics2",   color: "#FFF0F5", border: "#C71585",
+                      title: "MCP Server #2", subtitle: "\n\n\"sklearn-lab\"\nScikit-learn tools" },
+
+  { id: "Storage",  group: "storage",      color: "#F0FFF0", border: "#228B22",
+                      title: "Storage",  subtitle: "\n\nPostgres + S3\nBoards • Datasets • Charts" }
+];
+
+const links = [
+  { source: "Client",  target: "Agent",   label: "chat / JSON" },
+  { source: "Agent",   target: "MCP1",    label: "tool calls" },
+  { source: "Agent",   target: "MCP2",    label: "tool calls" },
+  { source: "MCP1",    target: "Storage", label: "artifacts", dashed: true },
+  { source: "MCP2",    target: "Storage", dashed: true }
+];
+
+/*  ───────────────────────────────
+    2.  SVG STAGE & FORCE LAYOUT
+    ─────────────────────────────── */
+const svg   = d3.select("#diagram"),
+      width = window.innerWidth,
+      height= window.innerHeight;
+
+/*  A simple force-directed layout with gentle left→right flow:
+    - linkDistance 220 px
+    - forceX() nudges columns outward for readability
+*/
+const simulation = d3.forceSimulation(nodes)
+  .force("link", d3.forceLink(links).id(d => d.id).distance(240))
+  .force("charge", d3.forceManyBody().strength(-800))
+  .force("center", d3.forceCenter(width/2, height/2))
+  .force("x", d3.forceX().strength(0.2).x(d => {
+      // manual columns to keep LR order: presentation → agent → servers → storage
+      const columns = { Client: 0.1, Agent: 0.35, MCP1: 0.65, MCP2: 0.65, Storage: 0.9 };
+      return columns[d.id] * width;
+  }))
+  .force("y", d3.forceY().strength(0.05).y(height/2));
+
+/*  ───────────────────────────────
+    3.  DRAW LINKS
+    ─────────────────────────────── */
+const linkGroup = svg.append("g").attr("class", "links");
+
+const linkLines = linkGroup.selectAll("line")
+  .data(links)
+  .enter().append("line")
+    .attr("class", d => d.dashed ? "link dash" : "link");
+
+const linkLabels = linkGroup.selectAll("text")
+  .data(links.filter(d => d.label))
+  .enter().append("text")
+    .attr("class", "linkLabel")
+    .text(d => d.label);
+
+/*  ───────────────────────────────
+    4.  DRAW NODES (cards)
+    ─────────────────────────────── */
+const nodeGroup = svg.append("g").attr("class", "nodes");
+
+const node = nodeGroup.selectAll("g.node")
+  .data(nodes)
+  .enter().append("g")
+    .attr("class", "node")
+    .call(d3.drag()                      /* allow manual drag for fun */
+          .on("start", dragStarted)
+          .on("drag",  dragged)
+          .on("end",   dragEnded));
+
+/*  Each node is a rounded rect + two text lines */
+node.append("rect")
+    .attr("width", 180)
+    .attr("height", 90)
+    .attr("x", -90)      // center the rect on (0,0)
+    .attr("y", -45)
+    .attr("fill",  d => d.color)
+    .attr("stroke", d => d.border);
+
+node.append("text")
+    .attr("class", "title")
+    .attr("text-anchor", "middle")
+    .attr("dy", "-0.2em")
+    .text(d => d.title);
+
+node.append("text")
+    .attr("class", "subtitle")
+    .attr("text-anchor", "middle")
+    .attr("dy", "1.4em")
+    .selectAll("tspan")                   // multi-line subtitles
+    .data(d => d.subtitle.split("\n"))
+    .enter().append("tspan")
+      .attr("x", 0)
+      .attr("dy", (d,i) => i ? "1.1em" : 0)
+      .text(d => d);
+
+/*  ───────────────────────────────
+    5.  TICK HANDLER
+    ─────────────────────────────── */
+simulation.on("tick", () => {
+  // update link positions
+  linkLines
+      .attr("x1", d => d.source.x)
+      .attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x)
+      .attr("y2", d => d.target.y);
+
+  // place edge labels at 50 % of the segment
+  linkLabels
+      .attr("x", d => (d.source.x + d.target.x) / 2 )
+      .attr("y", d => (d.source.y + d.target.y) / 2 - 6 );
+
+  // update node positions
+  node.attr("transform", d => `translate(${d.x},${d.y})`);
+});
+
+/*  ───────────────────────────────
+    6.  DRAG BEHAVIOUR
+    ─────────────────────────────── */
+function dragStarted(event, d) {
+  if (!event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;  d.fy = d.y;
+}
+function dragged(event,d) {
+  d.fx = event.x; d.fy = event.y;
+}
+function dragEnded(event,d) {
+  if (!event.active) simulation.alphaTarget(0);
+  d.fx = null; d.fy = null;      /* release node */
+}
+
+</script>
+</body>
+</html>
