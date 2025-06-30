@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask-Your-Data | Premium EDA Workbench</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/>
+                </svg>
+                <span class="logo-text">Ask-Your-Data</span>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="canvas-controls">
+                <button class="btn-icon" id="zoomOut" title="Zoom Out">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><line x1="8" y1="11" x2="14" y2="11"/>
+                    </svg>
+                </button>
+                <span class="zoom-level">100%</span>
+                <button class="btn-icon" id="zoomIn" title="Zoom In">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+                    </svg>
+                </button>
+                <div class="divider"></div>
+                <button class="btn-icon hand-drawn-toggle" id="handDrawnToggle" title="Toggle Hand-drawn Style">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="btn btn--outline" id="loadDataBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                </svg>
+                Load Titanic Data
+            </button>
+            <button class="btn btn--secondary" id="exportBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Export
+            </button>
+            <div class="user-menu">
+                <button class="btn-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Left Sidebar - Data Panel -->
+        <aside class="sidebar sidebar--left" id="leftSidebar">
+            <div class="sidebar-header">
+                <h3>Dataset Overview</h3>
+                <button class="btn-icon sidebar-toggle" data-target="leftSidebar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+            <div class="sidebar-content">
+                <div class="data-status" id="dataStatus">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                        </svg>
+                        <p>No dataset loaded</p>
+                        <button class="btn btn--primary btn--sm" id="loadDataSidebarBtn">Load Titanic Dataset</button>
+                    </div>
+                </div>
+                <div class="dataset-info hidden" id="datasetInfo">
+                    <div class="info-card">
+                        <h4>Titanic Survival Dataset</h4>
+                        <div class="stats-grid">
+                            <div class="stat">
+                                <span class="stat-label">Total Rows</span>
+                                <span class="stat-value">891</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Columns</span>
+                                <span class="stat-value">12</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Missing Values</span>
+                                <span class="stat-value">866</span>
+                            </div>
+                        </div>
+                        <div class="last-loaded">
+                            <small class="text-secondary">Loaded: <span id="loadedTime">--</span></small>
+                        </div>
+                    </div>
+                    <div class="columns-summary">
+                        <h5>Column Summary</h5>
+                        <div class="columns-list" id="columnsList">
+                            <!-- Columns will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center Canvas -->
+        <div class="canvas-container">
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <div class="canvas-grid"></div>
+                <div class="canvas-content" id="canvasContent">
+                    <div class="welcome-message" id="welcomeMessage">
+                        <div class="welcome-content">
+                            <h2>Welcome to Ask-Your-Data</h2>
+                            <p>Load the Titanic dataset to start exploring and analyzing your data with AI-powered insights.</p>
+                            <button class="btn btn--primary" id="welcomeLoadBtn">Load Titanic Dataset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - AI Chat -->
+        <aside class="sidebar sidebar--right" id="rightSidebar">
+            <div class="sidebar-header">
+                <h3>AI Assistant</h3>
+                <button class="btn-icon sidebar-toggle" data-target="rightSidebar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+            <div class="sidebar-content">
+                <div class="chat-container">
+                    <div class="suggestions-section" id="suggestionsSection">
+                        <h5>Top 5 Questions to Ask</h5>
+                        <div class="suggestions-list" id="suggestionsList">
+                            <!-- Suggestions will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="welcome-chat-message">
+                            <div class="ai-avatar">🤖</div>
+                            <div class="message-content">
+                                <p>Hello! I'm your AI assistant. Load a dataset and I'll help you explore it with natural language queries and automated insights.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question about your data..." disabled>
+                            <button class="btn-icon send-btn" id="sendBtn" disabled>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tools-section">
+                    <h5>Quick Actions</h5>
+                    <div class="tool-buttons">
+                        <button class="btn btn--outline btn--sm tool-btn" id="modelBuilderBtn" disabled>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <circle cx="12" cy="1" r="1"></circle>
+                                <circle cx="12" cy="23" r="1"></circle>
+                                <circle cx="20.49" cy="8.51" r="1"></circle>
+                                <circle cx="3.51" cy="15.49" r="1"></circle>
+                                <circle cx="20.49" cy="15.49" r="1"></circle>
+                                <circle cx="3.51" cy="8.51" r="1"></circle>
+                            </svg>
+                            Build ML Model
+                        </button>
+                        <button class="btn btn--outline btn--sm tool-btn" id="insightsBtn" disabled>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11H1l2-2 2 2"></path>
+                                <path d="M23 12l-4-4v3a5 5 0 0 1-5 5 5 5 0 0 1-5-5v-3l-4 4"></path>
+                            </svg>
+                            Generate Insights
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Loading Titanic Dataset</h3>
+            <p>Analyzing data structure and generating initial visualizations...</p>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for ML Model Builder -->
+    <div class="modal-overlay hidden" id="modelModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Machine Learning Model Builder</h3>
+                <button class="btn-icon modal-close" id="closeModelModal">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="model-config">
+                    <div class="form-group">
+                        <label class="form-label">Target Variable</label>
+                        <select class="form-control" id="targetVariable">
+                            <option value="Survived">Survived</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Features</label>
+                        <div class="feature-checkboxes" id="featureCheckboxes">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Model Type</label>
+                        <select class="form-control" id="modelType">
+                            <option value="random_forest">Random Forest</option>
+                            <option value="logistic_regression">Logistic Regression</option>
+                            <option value="gradient_boosting">Gradient Boosting</option>
+                        </select>
+                    </div>
+                    <button class="btn btn--primary" id="trainModelBtn">Train Model</button>
+                </div>
+                <div class="model-results hidden" id="modelResults">
+                    <h4>Model Performance</h4>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Accuracy</span>
+                            <span class="metric-value" id="accuracyValue">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Precision</span>
+                            <span class="metric-value" id="precisionValue">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Recall</span>
+                            <span class="metric-value" id="recallValue">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">F1 Score</span>
+                            <span class="metric-value" id="f1Value">--</span>
+                        </div>
+                    </div>
+                    <div class="feature-importance">
+                        <h5>Feature Importance</h5>
+                        <canvas id="featureImportanceChart" width="300" height="200"></canvas>
+                    </div>
+                    <button class="btn btn--secondary" id="addToCanvasBtn">Add Results to Canvas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
