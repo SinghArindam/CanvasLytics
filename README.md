@@ -3,15 +3,15 @@
 
 ---
 ### Landing Page
-![Landing Page](image-1.png)
+![Landing Page](assets/image-1.png)
 
 ---
 ### Loading
-![Loading](image-2.png)
+![Loading](assets/image-2.png)
 
 ---
 ### Titanic Dataset
-![Titanic Dataset](image-3.png)
+![Titanic Dataset](assets/image-3.png)
 
 ---
 
@@ -27,7 +27,7 @@
 | MCP-ML  | `sklearn-lab` | `train_model`, `evaluate_model`, `feature_importance` (scikit-learn). |
 | Storage | Postgres + object store | Persists boards, datasets, and generated charts. |
 
-![Graph](image.png)
+![Graph](assets/image.png)
 
 ---
 
