@@ -1,0 +1,18 @@
+# requirements.txt
+
+# Core web framework
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+httpx
+
+# Data science stack compatible with NumPy 2.x
+numpy>=2.0
+pandas>=2.2.2
+scipy>=1.13.0
+scikit-learn>=1.5.0
+seaborn>=0.13.2
+matplotlib>=3.8.4
+
+# Utilities
+joblib>=1.4.0
+python-multipart
