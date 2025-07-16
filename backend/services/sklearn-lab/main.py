@@ -3,6 +3,7 @@ from typing import Dict, List
 import joblib
 import pandas as pd
 from fastapi import FastAPI, Response
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
@@ -12,6 +13,14 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 app = FastAPI(title="Scikit-learn Lab Microservice")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- In-memory model storage ---
 # In production, use a dedicated model registry or cloud storage.

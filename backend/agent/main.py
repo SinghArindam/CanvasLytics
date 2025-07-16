@@ -6,6 +6,7 @@ from typing import Dict
 import pandas as pd
 import requests
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 
 # --- Configuration ---
 EDA_SERVICE_URL = "http://127.0.0.1:8001"
@@ -18,6 +19,16 @@ sessions: Dict[str, Dict] = {}
 # --- FastAPI App ---
 app = FastAPI(title="CanvasLytics Agent")
 
+# --- CORS Middleware ---
+# This is the crucial part that fixes the "404 Not Found" on OPTIONS requests.
+# It tells the agent to accept requests from your React frontend.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class ConnectionManager:
     """Manages active WebSocket connections."""
