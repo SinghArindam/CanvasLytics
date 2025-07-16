@@ -23,7 +23,7 @@ function App() {
         setIsLoading(true);
         try {
             // Call the backend API to load the CSV
-            const response = await fetch(`${API_BASE_URL}/load_csv`, {
+            const response = await fetch(`${API_BASE_URL}/load-titanic`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({}) // Empty body as the default titanic URL is used
