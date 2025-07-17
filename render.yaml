@@ -1,4 +1,4 @@
-# render.yaml - Updated to use a single backend Dockerfile
+# render.yaml - Final version using the correct 'dockerCommand' property
 
 services:
   # 1. The public-facing Agent service
@@ -6,11 +6,10 @@ services:
     name: agent
     env: docker
     plan: free
-    # All backend services now share the same build context
     dockerContext: ./services
     dockerfilePath: ./services/Dockerfile
-    # This command starts the agent service
-    startCommand: "uvicorn agent.main:app --host 0.0.0.0 --port 8000"
+    # CORRECTED: Use 'dockerCommand' for services with 'env: docker'
+    dockerCommand: "uvicorn agent.main:app --host 0.0.0.0 --port 8000"
     healthCheckPath: /
     envVars:
       - key: PANDAS_EDA_URL
@@ -25,8 +24,8 @@ services:
     plan: free
     dockerContext: ./services
     dockerfilePath: ./services/Dockerfile
-    # This command starts the pandas-eda service
-    startCommand: "uvicorn pandas-eda.main:app --host 0.0.0.0 --port 8001"
+    # CORRECTED: Use 'dockerCommand'
+    dockerCommand: "uvicorn pandas-eda.main:app --host 0.0.0.0 --port 8001"
 
   # 3. The internal Scikit-learn service
   - type: pserv
@@ -35,8 +34,8 @@ services:
     plan: free
     dockerContext: ./services
     dockerfilePath: ./services/Dockerfile
-    # This command starts the sklearn-lab service
-    startCommand: "uvicorn sklearn-lab.main:app --host 0.0.0.0 --port 8002"
+    # CORRECTED: Use 'dockerCommand'
+    dockerCommand: "uvicorn sklearn-lab.main:app --host 0.0.0.0 --port 8002"
 
   # 4. The public-facing Frontend Client (this service is unchanged)
   - type: web
