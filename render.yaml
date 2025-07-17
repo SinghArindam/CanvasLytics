@@ -39,7 +39,7 @@ services:
 
   # 4. The public-facing Frontend Client (this service is unchanged)
   - type: web
-    name: client
+    name: CanvasLytics
     env: docker
     plan: free
     dockerfilePath: ./client/Dockerfile
