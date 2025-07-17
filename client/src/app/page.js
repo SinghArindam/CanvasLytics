@@ -9,6 +9,7 @@ import Canvas from '@/components/Canvas/Canvas';
 import WelcomeMessage from '@/components/UI/WelcomeMessage';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useWebSocket } from '@/hooks/useWebSocket';
+import { dataset } from '@/lib/mockData'; // Import dummy data
 
 // Define the static questions here
 const TOP_QUESTIONS = [
@@ -64,12 +65,41 @@ export default function HomePage() {
       setIsDataLoaded(true);
       setIsLoading(false);
     }
+    // UPDATED: Handle chat responses from the backend
     if (latestMessage.chat_response) {
        addChatMessage('ai', latestMessage.chat_response);
     }
-
   }, [wsMessages]);
 
+  const addChatMessage = (sender, text) => {
+    setChatMessages(prev => [...prev, { sender, text }]);
+  };
+
+  // UPDATED: This function now sends the chat message to the backend agent
+  const handleSendMessage = (text) => {
+    if (!text.trim()) return;
+    addChatMessage('user', text);
+    // Send the query and the current dataset to the backend
+    sendMessage('natural_language_query', { query: text, data: rawDataset });
+  };
+  
+  // NEW: Function to load dummy data directly
+  const handleLoadDummyData = () => {
+    setIsLoading(true);
+    setCharts([]);
+    setChatMessages([]);
+
+    setTimeout(() => {
+      setDatasetSummary(dataset.summary);
+      setCharts(dataset.charts);
+      setRawDataset(dataset.raw); // Store raw dummy data for chat queries
+      setIsDataLoaded(true);
+      setIsLoading(false);
+      addChatMessage('ai', 'Dummy Titanic dataset loaded successfully! You can now ask me questions about it.');
+    }, 1500);
+  };
+
+  // --- Functions for real data loading ---
   const processData = (text, fileName) => {
     let data;
     if (fileName.endsWith('.csv')) {
@@ -82,8 +112,10 @@ export default function HomePage() {
       return;
     }
     setRawDataset(data);
+    setChatMessages([]);
     sendMessage('get_initial_visualizations', { data });
     sendMessage('get_dataset_summary', { data });
+    addChatMessage('ai', `Analyzing ${fileName}...`);
   };
   
   const handleFileLoad = (file) => {
@@ -94,18 +126,14 @@ export default function HomePage() {
     reader.readAsText(file);
   };
   
-  // New handler for loading data from a URL
   const handleLoadFromUrl = async (url) => {
     if (!url) return;
     setIsLoading(true);
     setCharts([]);
     try {
       const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const text = await response.text();
-      // Get a filename from URL to determine type
       const fileName = new URL(url).pathname.split('/').pop();
       processData(text, fileName);
     } catch (error) {
@@ -115,15 +143,7 @@ export default function HomePage() {
     }
   };
   
-  const addChatMessage = (sender, text) => {
-    setChatMessages(prev => [...prev, { sender, text }]);
-  };
-
-  const handleSendMessage = (text) => {
-    addChatMessage('user', text);
-    addChatMessage('ai', `I've received your message: "${text}". The backend logic for this is pending.`);
-  };
-
+  // --- Canvas interaction handlers ---
   const handleZoom = (direction) => {
     const zoomFactor = 1.2;
     if (direction === 'in') setZoom(prev => Math.min(prev * zoomFactor, 3));
@@ -131,48 +151,34 @@ export default function HomePage() {
   };
   const handleResetView = () => { setZoom(1); setOffset({ x: 0, y: 0 }); };
   const toggleHandDrawn = () => setHandDrawnMode(prev => !prev);
-  
   const handleUpdateChartPosition = (id, newPosition) => {
     setCharts(prevCharts =>
       prevCharts.map(chart => chart.id === id ? { ...chart, position: { ...chart.position, x: newPosition.x, y: newPosition.y } } : chart)
     );
   };
-  
   const removeChart = (id) => setCharts(prev => prev.filter(chart => chart.id !== id));
 
   return (
     <>
-      <Header 
-        isConnected={isConnected}
-        zoomLevel={zoom}
-        onZoomIn={() => handleZoom('in')}
-        onZoomOut={() => handleZoom('out')}
-        onResetView={handleResetView}
-        handDrawnMode={handDrawnMode}
-        onToggleHandDrawn={toggleHandDrawn}
-      />
+      <Header isConnected={isConnected} zoomLevel={zoom} onZoomIn={() => handleZoom('in')} onZoomOut={() => handleZoom('out')} onResetView={handleResetView} handDrawnMode={handDrawnMode} onToggleHandDrawn={toggleHandDrawn} />
       <main className="main-content">
         <LeftSidebar 
           isDataLoaded={isDataLoaded} 
           onFileLoad={handleFileLoad}
           onLoadFromUrl={handleLoadFromUrl}
+          onLoadDummyData={handleLoadDummyData} // Pass new handler
           datasetSummary={datasetSummary}
         />
         <div className="canvas-container">
           {isDataLoaded ? (
-            <Canvas
-              charts={charts}
-              removeChart={removeChart}
-              updateChartPosition={handleUpdateChartPosition}
-              zoom={zoom} offset={offset} setOffset={setOffset}
-              handDrawnMode={handDrawnMode}
-            />
+            <Canvas charts={charts} removeChart={removeChart} updateChartPosition={handleUpdateChartPosition} zoom={zoom} offset={offset} setOffset={setOffset} handDrawnMode={handDrawnMode} />
           ) : (
             <div className="canvas-wrapper">
               <div className="canvas-grid"></div>
               <WelcomeMessage 
                 onFileLoad={handleFileLoad} 
                 onLoadFromUrl={handleLoadFromUrl} 
+                onLoadDummyData={handleLoadDummyData} // Pass new handler
               />
             </div>
           )}
