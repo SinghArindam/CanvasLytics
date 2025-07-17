@@ -1,15 +1,5 @@
----
-title: CanvasLytics
-emoji: 🚀
-colorFrom: indigo
-colorTo: blue
-sdk: docker
-docker_compose_file: docker-compose.yml
-app_service: agent
-app_port: 8000
----
+# CanvasLytics [[Live](https://your-app-name.onrender.com) | [GitHub](https://github.com/SinghArindam/CanvasLytics)]
 
-# CanvasLytics  [[Live](https://singharindam.github.io/CanvasLytics/frontend/dist/index.html) | [GitHub](https://github.com/SinghArindam/CanvasLytics)]
 *Natural-language data exploration and baseline modelling on an infinite, Excalidraw-style canvas.*
 
 ---
@@ -26,7 +16,29 @@ app_port: 8000
 
 ---
 
+---
+### AI Assistant
+![AI Assistant](assets/image-4.png)
 
+---
+
+---
+### Titanic Dataset
+![Titanic Dataset](assets/image-5.png)
+
+---
+
+---
+### Titanic Dataset
+![Titanic Dataset](assets/image-6.png)
+
+---
+
+---
+### Titanic Dataset
+![Titanic Dataset](assets/image-7.png)
+
+---
 
 ---
 ## Architecture
@@ -62,43 +74,28 @@ app_port: 8000
 
 ---
 
-## Quick Start
-```
-git clone https://github.com/your-org/canvaslytics.git
-cd canvaslytics
+## Quick Start & Local Development
+The most reliable way to run the entire application stack locally is with Docker Compose.
+
+```bash
+# 1. Clone the repository
+git clone [https://github.com/SinghArindam/CanvasLytics.git](https://github.com/SinghArindam/CanvasLytics.git)
+cd CanvasLytics
+
+# 2. Build and run all services
 docker compose up --build
+
+# 3. Open the application in your browser
 # Then open http://localhost:3000
 ```
 
 ---
 
-## Local Development
-```
-# Front-end
-cd client
-pnpm install
-pnpm dev
-
-# Agent
-cd services/agent
-poetry install && poetry run dev
-
-# MCP servers
-cd services/pandas-eda
-poetry install && poetry run dev
-
-cd services/sklearn-lab
-poetry install && poetry run dev
-```
-
----
-
 ## Roadmap
-- Multi-dataset support (CSV upload, SQL connectors)  
-- Real-time multi-user collaboration  
+- Multi-dataset support (CSV upload)  
+- Real-time user collaboration  
 - Additional ML algorithms (e.g., Gradient Boosting, XGBoost)  
-- OAuth 2.0 and role-based access control  
-- Cloud deployment scripts (Terraform)
+- Cloud deployment scripts
 
 ---
 
