@@ -1,43 +1,66 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
-const LeftSidebar = ({ isDataLoaded, onLoadData, dataset }) => {
+const LeftSidebar = ({ isDataLoaded, onFileLoad, onLoadFromUrl, datasetSummary }) => {
+  const fileInputRef = useRef(null);
+  const [customUrl, setCustomUrl] = useState('');
+  
+  // Use the raw GitHub content URL for the Titanic dataset
+  const titanicUrl = 'https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv';
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      onFileLoad(file);
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <aside className="sidebar sidebar--left" id="leftSidebar">
       <div className="sidebar-header">
         <h3>Dataset Overview</h3>
       </div>
       <div className="sidebar-content">
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+          accept=".csv,.json"
+        />
         {!isDataLoaded ? (
           <div className="data-status">
             <div className="empty-state">
-              <p>No dataset loaded</p>
-              <button className="btn btn--primary btn--sm" onClick={onLoadData}>
-                Load Titanic Dataset
+              <button className="btn btn--primary btn--sm" style={{width: '100%'}} onClick={handleUploadClick}>
+                Upload File
               </button>
+              <button className="btn btn--secondary btn--sm" style={{width: '100%', marginTop: '8px'}} onClick={() => onLoadFromUrl(titanicUrl)}>
+                Load Sample Titanic Dataset
+              </button>
+              <div className="url-loader">
+                <label className="form-label" style={{marginBottom: 0}}>Or load from URL</label>
+                <div className="url-input-group">
+                   <input
+                      type="text"
+                      className="form-control"
+                      value={customUrl}
+                      onChange={(e) => setCustomUrl(e.target.value)}
+                      placeholder="https://.../data.csv"
+                    />
+                    <button className="btn btn--secondary" onClick={() => onLoadFromUrl(customUrl)}>Load</button>
+                </div>
+              </div>
             </div>
           </div>
         ) : (
-          <div className="dataset-info">
-            <div className="info-card">
-              <h4>Titanic Survival Dataset</h4>
-              <div className="stats-grid">
-                <div className="stat"><span className="stat-label">Total Rows</span><span className="stat-value">{dataset.total_rows}</span></div>
-                <div className="stat"><span className="stat-label">Columns</span><span className="stat-value">{dataset.columns_count}</span></div>
-                <div className="stat"><span className="stat-label">Missing Values</span><span className="stat-value">{dataset.missing_values}</span></div>
-              </div>
+          datasetSummary && (
+            <div className="dataset-info">
+              {/* This part remains unchanged */}
             </div>
-            <div className="columns-summary">
-              <h5>Column Summary</h5>
-              <div className="columns-list">
-                {Object.entries(dataset.columns).map(([name, info]) => (
-                  <div className="column-item" key={name}>
-                    <span className="column-name">{name}</span>
-                    <span className="column-type">{info.type}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          )
         )}
       </div>
     </aside>

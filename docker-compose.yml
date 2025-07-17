@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # Agent Service (Orchestrator)
+  agent:
+    build: ./services/agent
+    ports:
+      - "8000:8000"
+    environment:
+      - PANDAS_EDA_URL=http://pandas-eda:8001
+      - SKLEARN_LAB_URL=http://sklearn-lab:8002
+    networks:
+      - canvaslytics_net
+
+  # Pandas EDA Service
+  pandas-eda:
+    build: ./services/pandas-eda
+    ports:
+      - "8001:8001"
+    networks:
+      - canvaslytics_net
+
+  # Scikit-learn Lab Service
+  sklearn-lab:
+    build: ./services/sklearn-lab
+    ports:
+      - "8002:8002"
+    networks:
+      - canvaslytics_net
+
+  # Frontend Client Service
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_AGENT_WS_URL=ws://localhost:8000/ws/client123
+    depends_on:
+      - agent
+    networks:
+      - canvaslytics_net
+
+networks:
+  canvaslytics_net:
+    driver: bridge

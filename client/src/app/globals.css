@@ -1560,3 +1560,29 @@ body {
 .canvas-controls .btn-icon {
     cursor: pointer;
 }
+
+
+
+
+
+
+
+/* --- Additions for URL loader --- */
+
+.url-loader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin-top: var(--space-16);
+  text-align: left;
+}
+
+.url-input-group {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.url-input-group input {
+  flex: 1;
+  min-width: 0;
+}
