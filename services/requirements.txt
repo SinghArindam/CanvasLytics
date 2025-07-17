@@ -1,0 +1,11 @@
+# All dependencies for agent, pandas-eda, and sklearn-lab
+fastapi
+uvicorn
+websockets
+httpx
+python-dotenv
+pandas
+seaborn
+matplotlib
+scikit-learn
+joblib

@@ -1,13 +1,16 @@
-# render.yaml - Updated for Render's Free Tier
+# render.yaml - Updated to use a single backend Dockerfile
 
 services:
   # 1. The public-facing Agent service
   - type: web
     name: agent
     env: docker
-    plan: free # Use the free instance plan
-    dockerfilePath: ./services/agent/Dockerfile
-    dockerContext: ./services/agent
+    plan: free
+    # All backend services now share the same build context
+    dockerContext: ./services
+    dockerfilePath: ./services/Dockerfile
+    # This command starts the agent service
+    startCommand: "uvicorn agent.main:app --host 0.0.0.0 --port 8000"
     healthCheckPath: /
     envVars:
       - key: PANDAS_EDA_URL
@@ -16,31 +19,32 @@ services:
         value: http://sklearn-lab:8002
 
   # 2. The internal Pandas service
-  - type: web
+  - type: pserv
     name: pandas-eda
     env: docker
-    plan: free # Use the free instance plan
-    dockerfilePath: ./services/pandas-eda/Dockerfile
-    dockerContext: ./services/pandas-eda
-    # ipAllowList: []
+    plan: free
+    dockerContext: ./services
+    dockerfilePath: ./services/Dockerfile
+    # This command starts the pandas-eda service
+    startCommand: "uvicorn pandas-eda.main:app --host 0.0.0.0 --port 8001"
 
   # 3. The internal Scikit-learn service
-  - type: web
+  - type: pserv
     name: sklearn-lab
     env: docker
-    plan: free # Use the free instance plan
-    dockerfilePath: ./services/sklearn-lab/Dockerfile
-    dockerContext: ./services/sklearn-lab
-    # ipAllowList: []
+    plan: free
+    dockerContext: ./services
+    dockerfilePath: ./services/Dockerfile
+    # This command starts the sklearn-lab service
+    startCommand: "uvicorn sklearn-lab.main:app --host 0.0.0.0 --port 8002"
 
-  # 4. The public-facing Frontend Client
+  # 4. The public-facing Frontend Client (this service is unchanged)
   - type: web
     name: client
     env: docker
-    plan: free # Use the free instance plan
+    plan: free
     dockerfilePath: ./client/Dockerfile
     dockerContext: ./client
     envVars:
       - key: NEXT_PUBLIC_AGENT_WS_URL
-        # This is a placeholder. You will set the real value in the dashboard.
         value: "wss://placeholder.onrender.com"
