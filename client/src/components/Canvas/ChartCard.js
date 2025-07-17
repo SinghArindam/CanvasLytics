@@ -1,6 +1,10 @@
 import React, { useRef } from 'react';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
+import { Doughnut, Bar } from 'react-chartjs-2';
 
-const ChartCard = ({ id, title, base64, position, onRemove, onPositionChange, zoom, handDrawnMode }) => {
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
+
+const ChartCard = ({ id, title, type, position, onRemove, onPositionChange, zoom, handDrawnMode }) => {
   const chartRef = useRef(null);
   
   const handleMouseDown = (e) => {
@@ -37,6 +41,9 @@ const ChartCard = ({ id, title, base64, position, onRemove, onPositionChange, zo
     document.addEventListener('mouseup', handleMouseUp);
   };
 
+  const chartData = getChartData(id);
+  const options = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom' }, title: { display: false } } };
+
   return (
     <div
       ref={chartRef}
@@ -51,17 +58,23 @@ const ChartCard = ({ id, title, base64, position, onRemove, onPositionChange, zo
           </button>
         </div>
       </div>
-      <div className="chart-body" style={{ padding: '8px' }}>
-        <img 
-          src={`data:image/png;base64,${base64}`} 
-          alt={title} 
-          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-          // Prevent image's default drag behavior
-          onDragStart={(e) => e.preventDefault()}
-        />
+      <div className="chart-body">
+        {type === 'doughnut' && <Doughnut data={chartData} options={options} />}
+        {type === 'bar' && <Bar data={chartData} options={options} />}
       </div>
     </div>
   );
 };
+
+// This function simulates the specific chart data from your app.js
+function getChartData(id) {
+    switch (id) {
+        case 'survival-overview': return { labels: ['Survived', 'Did not survive'], datasets: [{ data: [342, 549], backgroundColor: ['#1FB8CD', '#FFC185'] }] };
+        case 'survival-by-class': return { labels: ['1st', '2nd', '3rd'], datasets: [{ label: 'Survived', data: [136, 87, 119], backgroundColor: '#1FB8CD' }, { label: 'Did not survive', data: [80, 97, 372], backgroundColor: '#FFC185' }]};
+        case 'age-distribution': return { labels: ['0-10', '11-20', '21-30', '31-40', '41-50'], datasets: [{ label: 'Count', data: [62, 102, 220, 167, 89], backgroundColor: '#B4413C' }]};
+        case 'survival-by-gender': return { labels: ['Male', 'Female'], datasets: [{ label: 'Survived', data: [109, 233], backgroundColor: '#1FB8CD' }, { label: 'Did not survive', data: [468, 81], backgroundColor: '#FFC185' }]};
+        default: return { labels: [], datasets: [] };
+    }
+}
 
 export default ChartCard;

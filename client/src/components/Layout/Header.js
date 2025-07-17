@@ -1,16 +1,10 @@
 import React from 'react';
 
-const Header = ({ isConnected, onLoadData, zoomLevel, onZoomIn, onZoomOut, onResetView, handDrawnMode, onToggleHandDrawn }) => {
+const Header = ({ onLoadData, zoomLevel, onZoomIn, onZoomOut, onResetView, handDrawnMode, onToggleHandDrawn }) => {
   return (
     <header className="header">
       <div className="header-left">
         <div className="logo">
-            {/* Connection Status Indicator */}
-          <span title={isConnected ? 'Connected to Backend' : 'Disconnected'} style={{
-            display: 'inline-block', width: 10, height: 10, marginRight: 8,
-            backgroundColor: isConnected ? 'var(--color-success)' : 'var(--color-error)',
-            borderRadius: '50%'
-          }}></span>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
           </svg>
