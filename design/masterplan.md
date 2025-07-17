@@ -152,7 +152,7 @@ The objective is to accelerate data understanding and experimentation without re
 - Explainable AI (XAI) blocks using SHAP/LIME
 - Real-time collaboration (multi-user canvas)
 - AutoML recommendations for better model selection
-- Full "Ask-Your-Data" chatbot mode with conversational chaining
+- Full "CanvasLytics" chatbot mode with conversational chaining
 
 ---
 
