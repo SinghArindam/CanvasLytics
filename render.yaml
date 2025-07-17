@@ -22,7 +22,7 @@ services:
     plan: free # Use the free instance plan
     dockerfilePath: ./services/pandas-eda/Dockerfile
     dockerContext: ./services/pandas-eda
-    ipAllowList: []
+    # ipAllowList: []
 
   # 3. The internal Scikit-learn service
   - type: web
@@ -31,7 +31,7 @@ services:
     plan: free # Use the free instance plan
     dockerfilePath: ./services/sklearn-lab/Dockerfile
     dockerContext: ./services/sklearn-lab
-    ipAllowList: []
+    # ipAllowList: []
 
   # 4. The public-facing Frontend Client
   - type: web
