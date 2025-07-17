@@ -1,6 +1,7 @@
 # CanvasLytics [[Live](https://client-8l4z.onrender.com) | [GitHub](https://github.com/SinghArindam/CanvasLytics)]
 
 *Natural-language data exploration and baseline modelling on an infinite, Excalidraw-style canvas.*
+
 ---
 
 Services :
