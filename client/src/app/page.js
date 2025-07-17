@@ -10,6 +10,15 @@ import WelcomeMessage from '@/components/UI/WelcomeMessage';
 import LoadingOverlay from '@/components/UI/LoadingOverlay';
 import { useWebSocket } from '@/hooks/useWebSocket';
 
+// Define the static questions here
+const TOP_QUESTIONS = [
+  "What factors most influenced survival rates?",
+  "How did passenger class affect survival?",
+  "What was the age distribution of survivors?",
+  "Did fare price correlate with survival?",
+  "How did family size impact survival chances?"
+];
+
 export default function HomePage() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -172,6 +181,7 @@ export default function HomePage() {
           isDataLoaded={isDataLoaded}
           messages={chatMessages}
           onSendMessage={handleSendMessage}
+          topQuestions={TOP_QUESTIONS}
         />
       </main>
       {isLoading && <LoadingOverlay />}

@@ -1,0 +1,56 @@
+# render.yaml - Render Blueprint
+# This file defines all the services for the CanvasLytics application.
+# https://render.com/docs/blueprint-spec
+
+services:
+  # 1. The public-facing Agent service (handles WebSockets)
+  - type: web
+    name: agent
+    env: docker
+    dockerfilePath: ./services/agent/Dockerfile
+    dockerContext: ./services/agent
+    healthCheckPath: /
+    envVars:
+      - key: PANDAS_EDA_URL
+        # Render provides internal URLs for private services
+        value: http://pandas-eda:8001
+      - key: SKLEARN_LAB_URL
+        value: http://sklearn-lab:8002
+
+  # 2. The internal Pandas service (not public)
+  - type: web
+    name: pandas-eda
+    env: docker
+    dockerfilePath: ./services/pandas-eda/Dockerfile
+    dockerContext: ./services/pandas-eda
+    # This makes the service private, only accessible from other services
+    # in your Render account.
+    ipAllowList: []
+
+  # 3. The internal Scikit-learn service (not public)
+  - type: web
+    name: sklearn-lab
+    env: docker
+    dockerfilePath: ./services/sklearn-lab/Dockerfile
+    dockerContext: ./services/sklearn-lab
+    ipAllowList: []
+
+  # 4. The public-facing Frontend Client
+  - type: web
+    name: client
+    env: docker
+    dockerfilePath: ./client/Dockerfile
+    dockerContext: ./client
+    envVars:
+      - key: NEXT_PUBLIC_AGENT_WS_URL
+        # Render automatically creates a public URL for your 'agent' service.
+        # We use that to construct the WebSocket URL.
+        fromService:
+          type: web
+          name: agent
+          property: url
+          # We need to transform the http URL to a wss URL.
+          # Render doesn't have a direct transform, so you must set this
+          # manually in the dashboard after the first deployment.
+          # For the first build, a placeholder is fine. We'll fix it in the UI.
+          # Example Placeholder: wss://your-agent-service.onrender.com/ws/client123

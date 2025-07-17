@@ -1,3 +1,14 @@
+---
+title: CanvasLytics
+emoji: 🚀
+colorFrom: indigo
+colorTo: blue
+sdk: docker
+docker_compose_file: docker-compose.yml
+app_service: agent
+app_port: 8000
+---
+
 # CanvasLytics  [[Live](https://singharindam.github.io/CanvasLytics/frontend/dist/index.html) | [GitHub](https://github.com/SinghArindam/CanvasLytics)]
 *Natural-language data exploration and baseline modelling on an infinite, Excalidraw-style canvas.*
 

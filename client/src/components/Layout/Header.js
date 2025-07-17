@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Header = ({ onLoadData, zoomLevel, onZoomIn, onZoomOut, onResetView, handDrawnMode, onToggleHandDrawn }) => {
+const Header = ({ isConnected, onLoadData, zoomLevel, onZoomIn, onZoomOut, onResetView, handDrawnMode, onToggleHandDrawn }) => {
   return (
     <header className="header">
       <div className="header-left">
