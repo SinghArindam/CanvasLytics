@@ -18,7 +18,7 @@ services:
         value: http://sklearn-lab:8002
 
   # 2. The internal Pandas service
-  - type: pserv
+  - type: web
     name: pandas-eda
     env: docker
     plan: free
@@ -28,7 +28,7 @@ services:
     dockerCommand: "uvicorn pandas-eda.main:app --host 0.0.0.0 --port 8001"
 
   # 3. The internal Scikit-learn service
-  - type: pserv
+  - type: web
     name: sklearn-lab
     env: docker
     plan: free
