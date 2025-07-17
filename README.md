@@ -1,4 +1,4 @@
-# CanvasLytics [[Live](https://client-8l4z.onrender.com) | [GitHub](https://github.com/SinghArindam/CanvasLytics)]
+# CanvasLytics [[Live](https://canvaslytics.onrender.com) | [GitHub](https://github.com/SinghArindam/CanvasLytics)]
 
 *Natural-language data exploration and baseline modelling on an infinite, Excalidraw-style canvas.*
 
@@ -9,7 +9,7 @@ Services :
 1. Agent Service [Live](https://agent-u615.onrender.com)
 2. Pandas EDA Service [Live](https://pandas-eda.onrender.com)
 3. Scikit-learn Lab Service [Live](https://sklearn-lab.onrender.com)
-4. Frontend Client Service [Live](https://client-8l4z.onrender.com)
+4. Frontend Client Service [Live](https://canvaslytics.onrender.com)
 
 ---
 ### Landing Page
